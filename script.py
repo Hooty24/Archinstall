@@ -87,10 +87,9 @@ os.system('genfstab -U /mnt >> /mnt/etc/fstab')
 print('\n#Configure the system')
 os.system('arch-chroot /mnt')
 
+
 # Generate locales
 print('\n#Generate locales')
-
-
 def replace_line_in_file(file_path, old_line, new_line):
     with open(file_path, 'r') as f:
         lines = f.readlines()
@@ -112,3 +111,7 @@ os.system('locale-gen')
 print('\n#Set the time')
 os.system('ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime')
 os.system('hwclock --systohc')
+
+# Specify the hostname
+print('\n#Specify the hostname')
+os.system('echo "arch" > /etc/hostname')
