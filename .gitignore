@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# C extensions
+*.dll
+
+# Distribution / packaging
+.eggs/
+dist/
+build/
+develop-eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Pip-related files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+coverage.xml
+*.coverage
+*.pyc
+*.pyo
+
+# Django
+*.sqlite3
+local_settings.py
+
+# Flask
+instance/
+*.pyc
+*.pyo
+
+# Celery
+celerybeat-schedule
+celeryd.pid
+
+# Sphinx documentation
+docs/_build/
+docs/sphinxext
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+
+# PyCharm
+.idea/
+*.iml
+*.pyi
+*.idea/workspace.xml
+
+# Visual Studio Code
+.vscode/

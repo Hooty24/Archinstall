@@ -1,0 +1,1 @@
+Here will be some script for installing Arch linux
