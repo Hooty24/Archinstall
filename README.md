@@ -1,1 +1,1 @@
-Here will be some script for installing Arch linux
+Here will be some scripts for installing Arch linux

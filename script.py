@@ -1,14 +1,14 @@
 import os
 
-# Ping test
+## Ping test
 print('Test Internet Connection')
 os.system('ping nhentai.com')
 
-# Time synchronization
+## Time synchronization
 os.system('timedatectl set-ntp true')
 os.system('timedatectl status')
 
-# Disk partition
+## Disk partition
 disk_path = input('Input path to main disk: ')
 
 # Display instructions
@@ -27,3 +27,24 @@ print('4. "w" for write changes')
 
 # Run fdisk
 os.system(f'fdisk {disk_path}')
+
+## Disk encryption
+if 'nvme' in disk_path:
+    os.system(f'cryptsetup luksFormat {disk_path}p3')
+    os.system(f'cryptsetup open {disk_path}p3 luks')
+else:
+    os.system(f'cryptsetup luksFormat {disk_path}3')
+    os.system(f'cryptsetup open {disk_path}3 luks')
+
+# Check the partitions
+os.system('ls /dev/mapper/*')
+
+# Create logical partitions inside the encrypted partition
+os.system('pvcreate /dev/mapper/luks')
+os.system('vgcreate main /dev/mapper/luks')
+
+# Put 100% of the encrypted partition into the root logical partition
+os.system('lvcreate -l 100%FREE main -n root')
+
+# View all logical partitions
+os.system('lvs')
