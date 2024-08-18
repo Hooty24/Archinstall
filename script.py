@@ -79,3 +79,6 @@ yay = ['yay', 'code-marketplace', 'waydroid', 'onlyoffice-bin']
 print('\n#Install basic software')
 os.system(f'pacstrap -K /mnt {" ".join(required_programs)}')
 
+# Generate fstab
+print('\n#Generate fstab')
+os.system('genfstab -U /mnt >> /mnt/etc/fstab')
