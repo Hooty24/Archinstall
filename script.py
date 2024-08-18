@@ -87,9 +87,10 @@ os.system('genfstab -U /mnt >> /mnt/etc/fstab')
 print('\n#Configure the system')
 os.system('arch-chroot /mnt')
 
-
 # Generate locales
 print('\n#Generate locales')
+
+
 def replace_line_in_file(file_path, old_line, new_line):
     with open(file_path, 'r') as f:
         lines = f.readlines()
@@ -107,4 +108,7 @@ replace_line_in_file('/etc/locale.gen', '#ru_RU.UTF-8 UTF-8', 'ru_RU.UTF-8 UTF-8
 replace_line_in_file('/etc/locale.gen', '#en_US.UTF-8 UTF-8', 'en_US.UTF-8 UTF-8\n')
 os.system('locale-gen')
 
-
+# Set the time
+print('\n#Set the time')
+os.system('ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime')
+os.system('hwclock --systohc')
