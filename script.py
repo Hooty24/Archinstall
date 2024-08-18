@@ -86,3 +86,25 @@ os.system('genfstab -U /mnt >> /mnt/etc/fstab')
 # Configure the system
 print('\n#Configure the system')
 os.system('arch-chroot /mnt')
+
+
+# Generate locales
+print('\n#Generate locales')
+def replace_line_in_file(file_path, old_line, new_line):
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines):
+        if line.strip() == old_line.strip():
+            print([lines[i]])
+            lines[i] = new_line
+
+    with open(file_path, 'w') as f:
+        f.writelines(lines)
+
+
+replace_line_in_file('/etc/locale.gen', '#ru_RU.UTF-8 UTF-8', 'ru_RU.UTF-8 UTF-8\n')
+replace_line_in_file('/etc/locale.gen', '#en_US.UTF-8 UTF-8', 'en_US.UTF-8 UTF-8\n')
+os.system('locale-gen')
+
+
