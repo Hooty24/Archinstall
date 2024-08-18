@@ -82,3 +82,7 @@ os.system(f'pacstrap -K /mnt {" ".join(required_programs)}')
 # Generate fstab
 print('\n#Generate fstab')
 os.system('genfstab -U /mnt >> /mnt/etc/fstab')
+
+# Configure the system
+print('\n#Configure the system')
+os.system('arch-chroot /mnt')
