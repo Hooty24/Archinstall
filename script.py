@@ -1,5 +1,7 @@
 import os
 
+os.system = print
+
 ## Ping test
 print('#Test Internet Connection')
 os.system('ping nhentai.com')
@@ -60,3 +62,20 @@ os.system('mkfs.ext4 /dev/mapper/main-root')
 os.system('mount /dev/mapper/main-root /mnt')
 os.system('mkdir /mnt/boot')
 os.system(f'mount {disk_path}{part_symbol}1 /mnt/boot')
+
+## Build the kernel and basic software
+required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager']
+optional_programs = ['linux-zen-headers', 'base-devel', 'ark', 'bluez-utils', 'btop', 'code',
+                     'dolphin', 'elisa', 'fastfetch', 'firefox', 'fish', 'fuse2', 'ffmpeg', 'git', 'github-cli',
+                     'gparted',
+                     'gwenview',
+                     'kate', 'kdeconnect', 'konsole', 'micro', 'pass', 'pyenv', 'spectacle', 'speedtest-cli',
+                     'telegram-desktop',
+                     'timeshift', 'torbrowser-launcher', 'wireguard-tools', 'arj', 'lrzip', 'lzop', 'p7zip',
+                     'unarchiver', 'unrar']
+yay = ['yay', 'code-marketplace', 'waydroid', 'onlyoffice-bin']
+
+# Install basic software
+print('\n#Install basic software')
+os.system(f'pacstrap -K /mnt {" ".join(required_programs)}')
+
