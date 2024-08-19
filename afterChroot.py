@@ -29,6 +29,7 @@ replace_line_in_file('/etc/pacman.conf', '#Color', 'Color')
 replace_line_in_file('/etc/pacman.conf', '#ParallelDownloads = 5', 'ParallelDownloads = 15')
 replace_line_in_file('/etc/pacman.conf', '#[multilib]', '[multilib]')
 replace_line_in_file('/etc/pacman.conf', '#Include = /etc/pacman.d/mirrorlist', 'Include = /etc/pacman.d/mirrorlist')
+os.system('pacman -Sy')
 
 # Generate locales
 print('\n#Generate locales')
@@ -54,3 +55,16 @@ print('\n#Adding new user with groups')
 username = input('Enter username: ')
 os.system(f'useradd -m -G wheel,audio,video,storage  {username}')
 os.system(f'passwd {username}')
+
+# Rebuild the kernel
+print('\n#Rebuilding the kernel')
+with open('/etc/mkinitcpio.conf', 'r') as f:
+    lines = f.readlines()
+for i, line in enumerate(lines):
+    if line.startswith('HOOKS'):
+        temp = line.replace('=', ' ').replace('(', ' ').replace(')', ' ').split()
+        temp = temp[:-1] + ['encrypt', 'lvm2'] + [temp[-1]]
+        lines[i] = f'{temp[0]}=({" ".join(temp[1:])})'
+with open('/etc/mkinitcpio.conf', 'w') as f:
+    f.writelines(lines)
+os.system('mkinitcpio -p linux-zen')
