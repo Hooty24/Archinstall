@@ -38,3 +38,6 @@ os.system('hwclock --systohc')
 # Specify the hostname
 print('\n#Specify the hostname')
 os.system('echo "arch" > /etc/hostname')
+
+# Specify the password for the root user
+os.system('passwd')

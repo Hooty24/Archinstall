@@ -1,7 +1,5 @@
 import os
 
-os.system = print
-
 ## Ping test
 print('#Testing Internet connection')
 os.system('ping nhentai.com')
