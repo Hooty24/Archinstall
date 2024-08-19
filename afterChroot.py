@@ -1,7 +1,5 @@
 import os
 
-os.system = print
-
 optional_programs = ['linux-zen-headers', 'base-devel', 'ark', 'bluez-utils', 'btop', 'code',
                      'dolphin', 'elisa', 'fastfetch', 'firefox', 'fish', 'fuse2', 'ffmpeg', 'git', 'github-cli',
                      'gparted',
@@ -50,3 +48,9 @@ os.system('echo "arch" > /etc/hostname')
 # Specify the password for the root user
 print('\n#Specifying the password for the root user')
 os.system('passwd')
+
+# Add new user with groups
+print('\n#Adding new user with groups')
+username = input('Enter username: ')
+os.system(f'useradd -m -G wheel,audio,video,storage  {username}')
+os.system(f'passwd {username}')
