@@ -64,7 +64,7 @@ os.system('mkdir /mnt/boot')
 os.system(f'mount {disk_path}{part_symbol}1 /mnt/boot')
 
 ## Build the kernel and basic software
-required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager']
+required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager', 'micro']
 
 # Install basic software
 print('\n#Installing basic software')

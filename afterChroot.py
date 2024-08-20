@@ -1,14 +1,15 @@
 import os
 
-optional_programs = ['linux-zen-headers', 'base-devel', 'ark', 'bluez-utils', 'btop', 'code',
-                     'dolphin', 'elisa', 'fastfetch', 'firefox', 'fish', 'fuse2', 'ffmpeg', 'git', 'github-cli',
-                     'gparted',
-                     'gwenview',
-                     'kate', 'kdeconnect', 'konsole', 'micro', 'pass', 'pyenv', 'spectacle', 'speedtest-cli',
-                     'telegram-desktop',
-                     'timeshift', 'torbrowser-launcher', 'wireguard-tools', 'arj', 'lrzip', 'lzop', 'p7zip',
-                     'unarchiver', 'unrar']
-yay = ['yay', 'code-marketplace', 'waydroid', 'onlyoffice-bin']
+optional_programs = ['linux-zen-headers', 'base-devel', 'bluez-utils', 'btop', 'fastfetch', 'firefox', 'fish',
+                     'fuse2', 'git', 'github-cli', 'code',
+                     'micro', 'pass', 'pyenv', 'python-poetry', 'speedtest-cli', 'telegram-desktop', 'timeshift',
+                     'torbrowser-launcher', 'wireguard-tools']
+
+temporary_programs = ['kitty']
+
+needs = '''file manager, archiver, text editor, photo viewer, screenshot program, music player'''
+
+yay = ['yay', 'waydroid', 'onlyoffice-bin', 'code-marketplace']
 
 
 def replace_line_in_file(file_path, old_line, new_line):
@@ -63,8 +64,13 @@ with open('/etc/mkinitcpio.conf', 'r') as f:
 for i, line in enumerate(lines):
     if line.startswith('HOOKS'):
         temp = line.replace('=', ' ').replace('(', ' ').replace(')', ' ').split()
-        temp = temp[:-1] + ['encrypt', 'lvm2'] + [temp[-1]]
+        temp = temp[:-1] + ['encrypt', 'lvm2'] + [temp[-1] + '\n']
         lines[i] = f'{temp[0]}=({" ".join(temp[1:])})'
 with open('/etc/mkinitcpio.conf', 'w') as f:
     f.writelines(lines)
 os.system('mkinitcpio -p linux-zen')
+
+# sudo configuration
+print('#\nsudo configuration')
+print('Uncomment: %wheel ALL=(ALL:ALL) ALL')
+os.system('sudo EDITOR=micro visudo')
