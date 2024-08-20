@@ -80,8 +80,6 @@ def replace_line_in_file(file_path, old_line, new_line):
 print('\n#Improving pacman performance')
 replace_line_in_file('/etc/pacman.conf', '#Color', 'Color')
 replace_line_in_file('/etc/pacman.conf', '#ParallelDownloads = 5', 'ParallelDownloads = 15')
-replace_line_in_file('/etc/pacman.conf', '#[multilib]', '[multilib]')
-replace_line_in_file('/etc/pacman.conf', '#Include = /etc/pacman.d/mirrorlist', 'Include = /etc/pacman.d/mirrorlist')
 os.system('pacman -Sy')
 
 required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager', 'micro', 'sudo']
@@ -93,6 +91,9 @@ os.system(f'pacstrap -K /mnt {" ".join(required_programs)}')
 # Generate fstab
 print('\n#Generating fstab')
 os.system('genfstab -U /mnt >> /mnt/etc/fstab')
+
+# Move archinstall package for future use
+os.system('mv /root/Archinstall /mnt')
 
 # Enter chroot environment
 print('\n#Entering chroot environment')
