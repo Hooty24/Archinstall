@@ -1,16 +1,5 @@
 import os
 
-optional_programs = ['linux-zen-headers', 'base-devel', 'bluez-utils', 'btop', 'fastfetch', 'firefox', 'fish',
-                     'fuse2', 'git', 'github-cli', 'code',
-                     'micro', 'pass', 'pyenv', 'python-poetry', 'speedtest-cli', 'telegram-desktop', 'timeshift',
-                     'torbrowser-launcher', 'wireguard-tools']
-
-temporary_programs = ['kitty']
-
-needs = '''file manager, archiver, text editor, photo viewer, screenshot program, music player'''
-
-yay = ['yay', 'waydroid', 'onlyoffice-bin', 'code-marketplace']
-
 
 def replace_line_in_file(file_path, old_line, new_line):
     with open(file_path, 'r') as f:
@@ -82,13 +71,14 @@ disk_path = input('Input path to main disk: ')
 part_symbol = 'p' if 'nvme' in disk_path else ''
 os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
 with open('inf.txt', 'r') as f:
-    disk_uuid = f.readline().split()[1][5:]
+    disk_uuid = f.readline().split()[1][6:-1]
+os.remove('inf.txt')
 refind_config = '# prepare boot options for refind\n' + \
                 f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"\n\n' + \
                 '''# configure refind
-            "Boot with standard options"  "${BOOT_OPTIONS} rw loglevel=3"
-            "Boot to single-user mode"    "${BOOT_OPTIONS} rw loglevel=3 single"
-            "Boot with minimal options"   "ro ${BOOT_OPTIONS}"'''
+"Boot with standard options"  "${BOOT_OPTIONS} rw loglevel=3"
+"Boot to single-user mode"    "${BOOT_OPTIONS} rw loglevel=3 single"
+"Boot with minimal options"   "ro ${BOOT_OPTIONS}"'''
 with open('/boot/refind_linux.conf', 'w') as f:
     f.write(refind_config)
 
