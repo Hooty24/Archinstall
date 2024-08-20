@@ -1,4 +1,5 @@
 import os
+from beforeChroot import disk_path, part_symbol
 
 optional_programs = ['linux-zen-headers', 'base-devel', 'bluez-utils', 'btop', 'fastfetch', 'firefox', 'fish',
                      'fuse2', 'git', 'github-cli', 'code',
@@ -73,4 +74,19 @@ os.system('mkinitcpio -p linux-zen')
 # sudo configuration
 print('#\nsudo configuration')
 print('Uncomment: %wheel ALL=(ALL:ALL) ALL')
+input('Press enter to continue')
 os.system('sudo EDITOR=micro visudo')
+
+# Installation loader
+os.system('refind-install')
+os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
+with open('inf.txt', 'r') as f:
+    disk_uuid = f.readline().split()[1][5:]
+refind_config = '# prepare boot options for refind\n' + \
+                f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"\n\n' + \
+                '''# configure refind
+            "Boot with standard options"  "${BOOT_OPTIONS} rw loglevel=3"
+            "Boot to single-user mode"    "${BOOT_OPTIONS} rw loglevel=3 single"
+            "Boot with minimal options"   "ro ${BOOT_OPTIONS}"'''
+with open('/boot/refind_linux.conf', 'w') as f:
+    f.write(refind_config)
