@@ -1,5 +1,4 @@
 import os
-from beforeChroot import disk_path, part_symbol
 
 optional_programs = ['linux-zen-headers', 'base-devel', 'bluez-utils', 'btop', 'fastfetch', 'firefox', 'fish',
                      'fuse2', 'git', 'github-cli', 'code',
@@ -79,6 +78,8 @@ os.system('sudo EDITOR=micro visudo')
 
 # Installation loader
 os.system('refind-install')
+disk_path = input('Input path to main disk: ')
+part_symbol = 'p' if 'nvme' in disk_path else ''
 os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
 with open('inf.txt', 'r') as f:
     disk_uuid = f.readline().split()[1][5:]
@@ -90,3 +91,6 @@ refind_config = '# prepare boot options for refind\n' + \
             "Boot with minimal options"   "ro ${BOOT_OPTIONS}"'''
 with open('/boot/refind_linux.conf', 'w') as f:
     f.write(refind_config)
+
+# Enabling services
+os.system('systemctl enable NetworkManager')
