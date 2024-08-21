@@ -92,9 +92,5 @@ os.system(f'pacstrap -K /mnt {" ".join(required_programs)}')
 print('\n#Generating fstab')
 os.system('genfstab -U /mnt >> /mnt/etc/fstab')
 
-# Move archinstall package for future use
-os.system('mv /root/Archinstall /mnt')
-
 # Enter chroot environment
-print('\n#Entering chroot environment')
-os.system('arch-chroot /mnt')
+print('\nTo enter chroot environment write: arch-chroot /mnt')
