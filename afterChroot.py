@@ -53,6 +53,7 @@ for i, line in enumerate(lines):
         temp = line.replace('=', ' ').replace('(', ' ').replace(')', ' ').split()
         temp = temp[:-1] + ['encrypt', 'lvm2'] + [temp[-1]]
         lines[i] = f'{temp[0]}=({" ".join(temp[1:])})\n'
+        break
 with open('/etc/mkinitcpio.conf', 'w') as f:
     f.writelines(lines)
 os.system('mkinitcpio -p linux-zen')

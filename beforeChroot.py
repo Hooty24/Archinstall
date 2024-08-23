@@ -82,7 +82,7 @@ replace_line_in_file('/etc/pacman.conf', '#Color', 'Color')
 replace_line_in_file('/etc/pacman.conf', '#ParallelDownloads = 5', 'ParallelDownloads = 15')
 os.system('pacman -Sy')
 
-required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager', 'micro', 'sudo']
+required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager', 'micro', 'sudo', 'python']
 
 # Install basic software
 print('\n#Installing basic software')
