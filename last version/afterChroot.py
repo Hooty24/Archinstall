@@ -10,7 +10,11 @@ os.system('pacman -Sy')
 
 # Generate locales
 print('\n#Generate locales')
-replace_line_in_file('/etc/locale.gen', '#ru_RU.UTF-8 UTF-8', 'ru_RU.UTF-8 UTF-8')
+langs = ['#ru_RU.UTF-8 UTF-8', '#fr_FR.UTF-8 UTF-8']
+for i, x in enumerate(langs):
+    print(f'{i}) {langs[i]}')
+lang = int(input('Choose a language (0-1): '))
+replace_line_in_file('/etc/locale.gen', langs[lang], 'ru_RU.UTF-8 UTF-8')
 replace_line_in_file('/etc/locale.gen', '#en_US.UTF-8 UTF-8', 'en_US.UTF-8 UTF-8')
 os.system('locale-gen')
 
