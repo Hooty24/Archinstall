@@ -1,5 +1,16 @@
 import os
-from modules.utils import replace_line_in_file
+
+
+def replace_line_in_file(file_path, old_line, new_line):
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines):
+        if line.strip() == old_line.strip():
+            lines[i] = new_line + '\n'
+
+    with open(file_path, 'w') as f:
+        f.writelines(lines)
 
 
 # Improve pacman performance
@@ -10,11 +21,7 @@ os.system('pacman -Sy')
 
 # Generate locales
 print('\n#Generate locales')
-langs = ['#ru_RU.UTF-8 UTF-8', '#fr_FR.UTF-8 UTF-8', '#de_DE.UTF-8 UTF-8']
-for i, x in enumerate(langs):
-    print(f'{i}) {langs[i]}')
-lang = int(input('Choose a language (0-1): '))
-replace_line_in_file('/etc/locale.gen', langs[lang], langs[lang][1:])
+replace_line_in_file('/etc/locale.gen', '#ru_RU.UTF-8 UTF-8', 'ru_RU.UTF-8 UTF-8')
 replace_line_in_file('/etc/locale.gen', '#en_US.UTF-8 UTF-8', 'en_US.UTF-8 UTF-8')
 os.system('locale-gen')
 

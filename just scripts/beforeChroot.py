@@ -1,5 +1,4 @@
 import os
-from modules.utils import replace_line_in_file
 
 ## Ping test
 print('#Testing Internet connection')
@@ -62,6 +61,20 @@ print('\n#Mounting the partitions for installing the system')
 os.system('mount /dev/mapper/main-root /mnt')
 os.system('mkdir /mnt/boot')
 os.system(f'mount {disk_path}{part_symbol}1 /mnt/boot')
+
+
+## Build the kernel and basic software
+def replace_line_in_file(file_path, old_line, new_line):
+    with open(file_path, 'r') as f:
+        lines = f.readlines()
+
+    for i, line in enumerate(lines):
+        if line.strip() == old_line.strip():
+            lines[i] = new_line + '\n'
+
+    with open(file_path, 'w') as f:
+        f.writelines(lines)
+
 
 # Improve pacman performance
 print('\n#Improving pacman performance')

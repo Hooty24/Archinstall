@@ -7,7 +7,7 @@ optional_programs = ['linux-zen-headers', 'base-devel', 'bluez-utils', 'btop', '
 
 hyprland = ['kitty', 'hyprland', 'waybar', 'wofi']
 
-kde = ['plasma', 'dolphin', 'ark', 'gwenview', 'kate', 'elisa', 'spectacle',  'kdeconnect', 'sshfs']
+kde = ['plasma', 'dolphin', 'ark', 'gwenview', 'kate', 'elisa', 'spectacle', 'konsole', 'kdeconnect', 'sshfs']
 
 yay = ['waydroid', 'onlyoffice-bin', 'code-marketplace']
 
