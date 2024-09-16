@@ -51,7 +51,7 @@ with open('/etc/mkinitcpio.conf', 'r') as f:
 for i, line in enumerate(lines):
     if line.startswith('HOOKS'):
         temp = line.replace('=', ' ').replace('(', ' ').replace(')', ' ').split()
-        temp = temp[:-1] + ['encrypt', 'lvm2'] + [temp[-1]]
+        temp = temp[:-2] + ['encrypt', 'lvm2'] + [temp[-2:]]
         lines[i] = f'{temp[0]}=({" ".join(temp[1:])})\n'
         break
 with open('/etc/mkinitcpio.conf', 'w') as f:
@@ -59,7 +59,7 @@ with open('/etc/mkinitcpio.conf', 'w') as f:
 os.system('mkinitcpio -p linux-zen')
 
 # sudo configuration
-print('#\nsudo configuration')
+print('\n#sudo configuration')
 print('Uncomment: %wheel ALL=(ALL:ALL) ALL')
 input('Press enter to continue')
 os.system('sudo EDITOR=micro visudo')
