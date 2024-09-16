@@ -15,7 +15,7 @@ disk_path = input('Input path to main disk: ')
 part_symbol = 'p' if 'nvme' in disk_path else ''
 loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)\n>> ')
 fs_partition_number = 3 if loader == '2' else 4
-disk_partition(disk_path, fs_partition_number)
+disk_partition(disk_path, loader)
 
 # Disk encryption
 disk_encryption(disk_path, part_symbol, loader)
