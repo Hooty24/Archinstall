@@ -18,7 +18,7 @@ fs_partition_number = 3 if loader == '2' else 4
 disk_partition(disk_path, loader)
 
 # Disk encryption
-disk_encryption(disk_path, part_symbol, loader)
+disk_encryption(disk_path, part_symbol, fs_partition_number)
 
 # Format boot partition to Fat32
 format_boot_partition(disk_path, part_symbol, fs_partition_number)
