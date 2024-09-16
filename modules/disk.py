@@ -18,7 +18,7 @@ def disk_partition(path, loader):
     else:
         print('Invalid loader type. Please choose 1 or 2.')
         exit()
-
+    input('Press Enter to continue')
     os.system(f'cfdisk {path}')
 
 

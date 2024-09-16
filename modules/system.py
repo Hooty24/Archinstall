@@ -1,5 +1,5 @@
 import os
-from utils import replace_line_in_file
+from modules.utils import replace_line_in_file
 
 
 def mount_partitions(disk_path, part_symbol, fs_partition_number):
