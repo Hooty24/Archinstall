@@ -1,96 +1,48 @@
 import os
+from modules.network import ping_test, time_synchronization
+from modules.disk import disk_partition, disk_encryption, format_boot_partition, initialize_swap_partition, \
+    format_partition_ext4
+from modules.system import mount_partitions, improve_pacman_performance, install_basic_software, generate_fstab
 
-## Ping test
-print('#Testing Internet connection')
-os.system('ping nhentai.net')
+# Ping test
+ping_test()
 
-## Time synchronization
-print('\n#Time synchronization')
-os.system('timedatectl set-ntp true')
-os.system('timedatectl status')
+# Time synchronization
+time_synchronization()
 
 ## Disk partition
-print('\n#Disk partitioning')
 disk_path = input('Input path to main disk: ')
 part_symbol = 'p' if 'nvme' in disk_path else ''
+loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)')
+fs_partition_number = 3 if loader == '2' else 4
+disk_partition(disk_path, fs_partition_number)
 
-# Display instructions
-print("Disk Partition Instructions:")
-print('1. "g" for gpt table')
-print('2. New partition:')
-print('\t1. "n" for new partition')
-print('\t2. Enter')
-print('\t3. Enter')
-print('\t4. +(number)(M/G)/Enter (for Linux FS)')
-print('3. Set partition type (EFI & swap):')
-print('\t1. "t" for set type')
-print('\t2. (1/2) - (efi/swap)')
-print('\t3. (1/19) - (efi/swap)')
-print('4. "w" for write changes')
-
-# Run fdisk
-os.system(f'fdisk {disk_path}')
-
-## Disk encryption
-print('\n#Disk encrypting')
-os.system(f'cryptsetup luksFormat {disk_path}{part_symbol}3')
-os.system(f'cryptsetup open {disk_path}{part_symbol}3 luks')
-
-# Create logical partitions inside the encrypted partition
-os.system('pvcreate /dev/mapper/luks')
-os.system('vgcreate main /dev/mapper/luks')
-
-# Put 100% of the encrypted partition into the root logical partition
-os.system('lvcreate -l 100%FREE main -n root')
+# Disk encryption
+disk_encryption(disk_path, part_symbol, loader)
 
 # Format boot partition to Fat32
-print('\n#Formating boot partition to Fat32')
-os.system(f'mkfs.fat -F32 {disk_path}{part_symbol}1')
+format_boot_partition(disk_path, part_symbol, fs_partition_number)
 
 # Initialize and activate swap partition
-print('\n#Initializing and activating swap partition')
-os.system(f'mkswap {disk_path}{part_symbol}2')
-os.system(f'swapon {disk_path}{part_symbol}2')
+initialize_swap_partition(disk_path, part_symbol, fs_partition_number)
 
 # Format the partition to ext4
-print('\n#Formatting partition to ext4')
-os.system('mkfs.ext4 /dev/mapper/main-root')
+format_partition_ext4()
 
 # Mount the partitions for installing the system
-print('\n#Mounting the partitions for installing the system')
-os.system('mount /dev/mapper/main-root /mnt')
-os.system('mkdir /mnt/boot')
-os.system(f'mount {disk_path}{part_symbol}1 /mnt/boot')
-
-
-## Build the kernel and basic software
-def replace_line_in_file(file_path, old_line, new_line):
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
-
-    for i, line in enumerate(lines):
-        if line.strip() == old_line.strip():
-            lines[i] = new_line + '\n'
-
-    with open(file_path, 'w') as f:
-        f.writelines(lines)
-
+mount_partitions(disk_path, part_symbol, fs_partition_number)
 
 # Improve pacman performance
-print('\n#Improving pacman performance')
-replace_line_in_file('/etc/pacman.conf', '#Color', 'Color')
-replace_line_in_file('/etc/pacman.conf', '#ParallelDownloads = 5', 'ParallelDownloads = 15')
-os.system('pacman -Sy')
+improve_pacman_performance()
 
-required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'refind', 'networkmanager', 'micro', 'sudo', 'python']
+required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'networkmanager', 'micro', 'sudo', 'python']
+required_programs += ['refind'] if loader == '2' else ['grub']
 
 # Install basic software
-print('\n#Installing basic software')
-os.system(f'pacstrap -K /mnt {" ".join(required_programs)}')
+install_basic_software()
 
 # Generate fstab
-print('\n#Generating fstab')
-os.system('genfstab -U /mnt >> /mnt/etc/fstab')
+generate_fstab()
 
 # Enter chroot environment
 print('\nTo enter chroot environment write: arch-chroot /mnt')

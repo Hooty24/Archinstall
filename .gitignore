@@ -50,6 +50,7 @@ docs/sphinxext
 .pytest_cache/
 
 # PyCharm
+structure.txt
 .idea/
 *.iml
 *.pyi

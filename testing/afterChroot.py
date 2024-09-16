@@ -1,17 +1,5 @@
 import os
-
-
-def replace_line_in_file(file_path, old_line, new_line):
-    with open(file_path, 'r') as f:
-        lines = f.readlines()
-
-    for i, line in enumerate(lines):
-        if line.strip() == old_line.strip():
-            lines[i] = new_line + '\n'
-
-    with open(file_path, 'w') as f:
-        f.writelines(lines)
-
+from modules.utils import replace_line_in_file
 
 # Improve pacman performance
 print('\n#Improving pacman performance')
