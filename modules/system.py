@@ -36,6 +36,7 @@ def generate_fstab():
     print('\n#Generating fstab')
     os.system('genfstab -U /mnt >> /mnt/etc/fstab')
 
+
 def generate_locales(locales):
     """
     Generates locales for chroot filesystem
@@ -48,3 +49,104 @@ def generate_locales(locales):
     for locale_number in locales:
         replace_line_in_file('/etc/locale.gen', langs[locale_number], langs[locale_number][1:])
     os.system('locale-gen')
+
+
+def set_time(timezone='Europe/Moscow'):
+    """
+    Sets the system time by configuring the timezone and updating the hardware clock.
+    """
+    print('\n#Setting the time')
+    os.system(f'ln -sf /usr/share/zoneinfo/{timezone} /etc/localtime')
+    os.system('hwclock --systohc')
+
+
+def set_hostname(hostname='archlinux'):
+    """
+    Sets the system hostname by writing to the /etc/hostname file and updating the current session.
+    """
+    print('\n#Specifying the hostname')
+    os.system(f'echo "{hostname}" > /etc/hostname')
+
+
+def set_root_password():
+    """
+    Sets the password for the root user.
+    """
+    print('\n#Specifying the password for the root user')
+    os.system('passwd')
+
+
+def add_user_with_groups():
+    """
+    Adds a new user with specified groups and sets the user's password.
+    """
+    print('\n#Adding new user with groups')
+    username = input('Enter username: ')
+    os.system(f'useradd -m -G wheel,audio,video,storage {username}')
+    os.system(f'passwd {username}')
+
+
+def rebuild_kernel():
+    """
+    Rebuilds the kernel by modifying the mkinitcpio configuration
+    and running the mkinitcpio command.
+    """
+    print('\n#Rebuilding the kernel')
+    with open('/etc/mkinitcpio.conf', 'r') as f:
+        lines = f.readlines()
+    for i, line in enumerate(lines):
+        if line.startswith('HOOKS'):
+            temp = line.replace('=', ' ').replace('(', ' ').replace(')', ' ').split()
+            temp = temp[:-2] + ['encrypt', 'lvm2'] + [temp[-2:]]
+            lines[i] = f'{temp[0]}=({" ".join(temp[1:])})\n'
+            break
+    with open('/etc/mkinitcpio.conf', 'w') as f:
+        f.writelines(lines)
+    os.system('mkinitcpio -p linux-zen')
+
+
+def configure_sudo():
+    """
+    Configures sudo.
+    """
+    print('\n#sudo configuration')
+    print('Uncomment: %wheel ALL=(ALL:ALL) ALL')
+    input('Press enter to continue')
+    os.system('sudo EDITOR=micro visudo')
+
+
+def refind_install():
+    os.system('refind-install')
+    disk_path = input('Input path to main disk: ')
+    part_symbol = 'p' if 'nvme' in disk_path else ''
+    os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
+    with open('inf.txt', 'r') as f:
+        disk_uuid = f.readline().split()[1][6:-1]
+    os.remove('inf.txt')
+    refind_config = '# prepare boot options for refind\n' + \
+                    f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"\n\n' + \
+                    '''# configure refind
+    "Boot with standard options"  "${BOOT_OPTIONS} rw loglevel=3"
+    "Boot to single-user mode"    "${BOOT_OPTIONS} rw loglevel=3 single"
+    "Boot with minimal options"   "ro ${BOOT_OPTIONS}"'''
+    with open('/boot/refind_linux.conf', 'w') as f:
+        f.write(refind_config)
+
+
+def install_loader():
+    loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)\n>> ')
+    if loader == '1':
+        pass
+    elif loader == '2':
+        refind_install()
+    else:
+        print('Invalid loader choice')
+        install_loader()
+
+
+def enable_services(services):
+    """
+    Enables specified services on the system.
+    """
+    print('\n#Enabling services')
+    os.system(f'systemctl enable {" ".join(services)}')
