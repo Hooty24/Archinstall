@@ -115,14 +115,8 @@ def configure_sudo():
     os.system('sudo EDITOR=micro visudo')
 
 
-def refind_install():
+def refind_install(disk_uuid):
     os.system('refind-install')
-    disk_path = input('Input path to main disk: ')
-    part_symbol = 'p' if 'nvme' in disk_path else ''
-    os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
-    with open('inf.txt', 'r') as f:
-        disk_uuid = f.readline().split()[1][6:-1]
-    os.remove('inf.txt')
     refind_config = '# prepare boot options for refind\n' + \
                     f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"\n\n' + \
                     '''# configure refind
@@ -133,12 +127,26 @@ def refind_install():
         f.write(refind_config)
 
 
+def grub_install(disk_path, disk_uuid):
+    replace_line_in_file('/etc/default/grub', 'GRUB_CMDLINE_LINUX=""',
+                         f'GRUB_CMDLINE_LINUX="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"')
+    replace_line_in_file('etc/default/grub', '#GRUB_ENABLE_CRYPTODISK=y', 'GRUB_ENABLE_CRYPTODISK=y')
+    os.system(f'grub-install {disk_path}')
+    os.system('grub-mkconfig -o /boot/grub/grub.cfg')
+
+
 def install_loader():
     loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)\n>> ')
+    disk_path = input('Input path to main disk: ')
+    part_symbol = 'p' if 'nvme' in disk_path else ''
+    os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
+    with open('inf.txt', 'r') as f:
+        disk_uuid = f.readline().split()[1][6:-1]
+    os.remove('inf.txt')
     if loader == '1':
-        pass
+        grub_install(disk_path, disk_uuid)
     elif loader == '2':
-        refind_install()
+        refind_install(disk_uuid)
     else:
         print('Invalid loader choice')
         install_loader()
