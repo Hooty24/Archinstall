@@ -130,7 +130,7 @@ def refind_install(disk_uuid):
 def grub_install(disk_path, disk_uuid):
     replace_line_in_file('/etc/default/grub', 'GRUB_CMDLINE_LINUX=""',
                          f'GRUB_CMDLINE_LINUX="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"')
-    replace_line_in_file('etc/default/grub', '#GRUB_ENABLE_CRYPTODISK=y', 'GRUB_ENABLE_CRYPTODISK=y')
+    replace_line_in_file('/etc/default/grub', '#GRUB_ENABLE_CRYPTODISK=y', 'GRUB_ENABLE_CRYPTODISK=y')
     os.system(f'grub-install {disk_path}')
     os.system('grub-mkconfig -o /boot/grub/grub.cfg')
 
