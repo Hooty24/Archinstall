@@ -1,4 +1,3 @@
-import os
 from modules.network import ping_test, time_synchronization
 from modules.disk import disk_partition, disk_encryption, format_boot_partition, initialize_swap_partition, \
     format_partition_ext4
@@ -39,7 +38,7 @@ required_programs = ['base', 'linux-zen', 'linux-firmware', 'lvm2', 'networkmana
 required_programs += ['refind'] if loader == '2' else ['grub']
 
 # Install basic software
-install_basic_software()
+install_basic_software(required_programs)
 
 # Generate fstab
 generate_fstab()
