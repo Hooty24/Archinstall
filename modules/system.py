@@ -97,7 +97,7 @@ def rebuild_kernel():
     for i, line in enumerate(lines):
         if line.startswith('HOOKS'):
             temp = line.replace('=', ' ').replace('(', ' ').replace(')', ' ').split()
-            temp = temp[:-2] + ['encrypt', 'lvm2'] + [temp[-2:]]
+            temp = temp[:-2] + ['encrypt', 'lvm2'] + temp[-2:]
             lines[i] = f'{temp[0]}=({" ".join(temp[1:])})\n'
             break
     with open('/etc/mkinitcpio.conf', 'w') as f:
