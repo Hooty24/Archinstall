@@ -115,8 +115,13 @@ def configure_sudo():
     os.system('sudo EDITOR=micro visudo')
 
 
-def refind_install(disk_uuid):
+def refind_install(disk_path):
     os.system('refind-install')
+    part_symbol = 'p' if 'nvme' in disk_path else ''
+    os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
+    with open('inf.txt', 'r') as f:
+        disk_uuid = f.readline().split()[1][6:-1]
+    os.remove('inf.txt')
     refind_config = '# prepare boot options for refind\n' + \
                     f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"\n\n' + \
                     '''# configure refind
@@ -127,7 +132,12 @@ def refind_install(disk_uuid):
         f.write(refind_config)
 
 
-def grub_install(disk_path, disk_uuid):
+def grub_install(disk_path):
+    part_symbol = 'p' if 'nvme' in disk_path else ''
+    os.system(f'blkid -s UUID {disk_path}{part_symbol}4 > inf.txt')
+    with open('inf.txt', 'r') as f:
+        disk_uuid = f.readline().split()[1][6:-1]
+    os.remove('inf.txt')
     replace_line_in_file('/etc/default/grub', 'GRUB_CMDLINE_LINUX=""',
                          f'GRUB_CMDLINE_LINUX="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"')
     replace_line_in_file('/etc/default/grub', '#GRUB_ENABLE_CRYPTODISK=y', 'GRUB_ENABLE_CRYPTODISK=y')
@@ -138,15 +148,10 @@ def grub_install(disk_path, disk_uuid):
 def install_loader():
     loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)\n>> ')
     disk_path = input('Input path to main disk: ')
-    part_symbol = 'p' if 'nvme' in disk_path else ''
-    os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
-    with open('inf.txt', 'r') as f:
-        disk_uuid = f.readline().split()[1][6:-1]
-    os.remove('inf.txt')
     if loader == '1':
-        grub_install(disk_path, disk_uuid)
+        grub_install(disk_path)
     elif loader == '2':
-        refind_install(disk_uuid)
+        refind_install(disk_path)
     else:
         print('Invalid loader choice')
         install_loader()
