@@ -1,17 +1,12 @@
 import os
-from modules.utils import replace_line_in_file
+from modules.system import improve_pacman_performance, generate_locales
 
 # Improve pacman performance
-print('\n#Improving pacman performance')
-replace_line_in_file('/etc/pacman.conf', '#Color', 'Color')
-replace_line_in_file('/etc/pacman.conf', '#ParallelDownloads = 5', 'ParallelDownloads = 15')
-os.system('pacman -Sy')
+improve_pacman_performance()
 
 # Generate locales
-print('\n#Generate locales')
-replace_line_in_file('/etc/locale.gen', '#ru_RU.UTF-8 UTF-8', 'ru_RU.UTF-8 UTF-8')
-replace_line_in_file('/etc/locale.gen', '#en_US.UTF-8 UTF-8', 'en_US.UTF-8 UTF-8')
-os.system('locale-gen')
+langs = list(map(int, input('Languages to generate(type with space separate):\n1. Russian\n>> ').split()))
+generate_locales([0] + langs)
 
 # Set the time
 print('\n#Setting the time')

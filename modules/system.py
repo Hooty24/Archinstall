@@ -35,3 +35,16 @@ def generate_fstab():
     """
     print('\n#Generating fstab')
     os.system('genfstab -U /mnt >> /mnt/etc/fstab')
+
+def generate_locales(locales):
+    """
+    Generates locales for chroot filesystem
+    """
+    print('\n#Generate locales')
+    langs = {
+        0: '#en_US.UTF-8 UTF-8',
+        1: '#ru_RU.UTF-8 UTF-8'
+    }
+    for locale_number in locales:
+        replace_line_in_file('/etc/locale.gen', langs[locale_number], langs[locale_number][1:])
+    os.system('locale-gen')
