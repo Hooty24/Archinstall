@@ -5,7 +5,9 @@ from modules.system import improve_pacman_performance, generate_locales, set_tim
 improve_pacman_performance()
 
 # Generate locales
-langs = list(map(int, input('Languages to generate(type with space separate):\n1. Russian\n>> ').split()))
+available_languages = ['Russian', 'German']
+print('Languages to generate(type with space separate):')
+langs = list(map(int, input(f'{"\n".join([f"{i+1}) {x}" for i, x in enumerate(available_languages)])}\n>>> ').split()))
 generate_locales([0] + langs)
 
 # Set the time
