@@ -24,7 +24,7 @@ set_root_password()
 add_user_with_groups()
 
 # Rebuild the kernel
-encryption = True if input('Do you want to encrypt system disk? [Y/n]').lower()[0] == 'y' else False
+encryption = True if input('Do you want to encrypt system disk? [Y/n] ').lower()[0] == 'y' else False
 if encryption:
     rebuild_kernel()
 

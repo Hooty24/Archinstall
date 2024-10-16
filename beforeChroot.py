@@ -14,7 +14,7 @@ disk_path = input('Input path to main disk: ')
 part_symbol = 'p' if 'nvme' in disk_path else ''
 loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)\n>> ')
 fs_partition_number = 3 if loader == '2' else 4
-encryption = True if input('Do you want to encrypt system disk? [Y/n]').lower()[0] == 'y' else False
+encryption = True if input('Do you want to encrypt system disk? [Y/n] ').lower()[0] == 'y' else False
 disk_partition(disk_path, loader)
 
 # Disk encryption
@@ -31,7 +31,7 @@ initialize_swap_partition(disk_path, part_symbol, fs_partition_number)
 format_partition_ext4(disk_path, part_symbol, fs_partition_number, encryption)
 
 # Mount the partitions for installing the system
-mount_partitions(disk_path, part_symbol, fs_partition_number)
+mount_partitions(disk_path, part_symbol, fs_partition_number, encryption)
 
 # Improve pacman performance
 improve_pacman_performance()
