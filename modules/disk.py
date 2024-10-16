@@ -5,7 +5,7 @@ def disk_partition(path, loader):
     """
     Partitions a disk using cfdisk, prompting for the desired loader type.
     """
-    print('Disk Partition Instructions:')
+    print('\nDisk Partition Instructions:')
     if loader == '1':
         print('1. 32M BIOS boot')
         print('2. 512M EFI System')
@@ -47,7 +47,8 @@ def initialize_swap_partition(disk_path, part_symbol, fs_partition_number):
     os.system(f'swapon {disk_path}{part_symbol}{fs_partition_number - 1}')
 
 
-def format_partition_ext4():
+def format_partition_ext4(disk_path, part_symbol, fs_partition_number, encryption):
     """Formats a partition to ext4."""
     print('\n#Formatting partition to ext4')
-    os.system('mkfs.ext4 /dev/mapper/main-root')
+    os.system(
+        f'mkfs.ext4 {'/dev/mapper/main-root' if encryption else disk_path + part_symbol + str(fs_partition_number)}')

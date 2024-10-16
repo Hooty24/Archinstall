@@ -7,7 +7,8 @@ improve_pacman_performance()
 # Generate locales
 available_languages = ['Russian', 'German']
 print('Languages to generate(type with space separate):')
-langs = list(map(int, input(f'{"\n".join([f"{i+1}) {x}" for i, x in enumerate(available_languages)])}\n>>> ').split()))
+langs = list(
+    map(int, input(f'{"\n".join([f"{i + 1}) {x}" for i, x in enumerate(available_languages)])}\n>>> ').split()))
 generate_locales([0] + langs)
 
 # Set the time
@@ -23,13 +24,15 @@ set_root_password()
 add_user_with_groups()
 
 # Rebuild the kernel
-rebuild_kernel()
+encryption = True if input('Do you want to encrypt system disk? [Y/n]').lower()[0] == 'y' else False
+if encryption:
+    rebuild_kernel()
 
 # sudo configuration
 configure_sudo()
 
 # Installation loader
-install_loader()
+install_loader(encryption)
 
 # Enabling services
 services = ['NetworkManager']

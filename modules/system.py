@@ -2,12 +2,13 @@ import os
 from modules.utils import replace_line_in_file
 
 
-def mount_partitions(disk_path, part_symbol, fs_partition_number):
+def mount_partitions(disk_path, part_symbol, fs_partition_number, encryption):
     """
     Mounts the partitions for installing the system.
     """
     print('\n#Mounting the partitions for installing the system')
-    os.system('mount /dev/mapper/main-root /mnt')
+    os.system(
+        f'mount {'/dev/mapper/main-root' if encryption else disk_path + part_symbol + str(fs_partition_number)} /mnt')
     os.system('mkdir /mnt/boot')
     os.system(f'mount {disk_path}{part_symbol}{fs_partition_number - 2} /mnt/boot')
 
@@ -116,15 +117,14 @@ def configure_sudo():
     os.system('sudo EDITOR=micro visudo')
 
 
-def refind_install(disk_path):
+def refind_install(disk_path, part_symbol, fs_partition_number, encryption):
     os.system('refind-install')
-    part_symbol = 'p' if 'nvme' in disk_path else ''
-    os.system(f'blkid -s UUID {disk_path}{part_symbol}3 > inf.txt')
+    os.system(f'blkid -s UUID {disk_path}{part_symbol}{fs_partition_number} > inf.txt')
     with open('inf.txt', 'r') as f:
         disk_uuid = f.readline().split()[1][6:-1]
     os.remove('inf.txt')
     refind_config = '# prepare boot options for refind\n' + \
-                    f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"\n\n' + \
+                    f'BOOT_OPTIONS="cryptdevice=UUID={disk_uuid}:main root={'/dev/mapper/main-root' if encryption else disk_path + part_symbol + str(fs_partition_number)}"\n\n' + \
                     '''# configure refind
     "Boot with standard options"  "${BOOT_OPTIONS} rw loglevel=3"
     "Boot to single-user mode"    "${BOOT_OPTIONS} rw loglevel=3 single"
@@ -133,29 +133,30 @@ def refind_install(disk_path):
         f.write(refind_config)
 
 
-def grub_install(disk_path):
-    part_symbol = 'p' if 'nvme' in disk_path else ''
-    os.system(f'blkid -s UUID {disk_path}{part_symbol}4 > inf.txt')
+def grub_install(disk_path, part_symbol, fs_partition_number, encryption):
+    os.system(f'blkid -s UUID {disk_path}{part_symbol}{fs_partition_number} > inf.txt')
     with open('inf.txt', 'r') as f:
         disk_uuid = f.readline().split()[1][6:-1]
     os.remove('inf.txt')
     replace_line_in_file('/etc/default/grub', 'GRUB_CMDLINE_LINUX=""',
-                         f'GRUB_CMDLINE_LINUX="cryptdevice=UUID={disk_uuid}:main root=/dev/mapper/main-root"')
+                         f'GRUB_CMDLINE_LINUX="cryptdevice=UUID={disk_uuid}:main root={'/dev/mapper/main-root' if encryption else disk_path + part_symbol + str(fs_partition_number)}"')
     replace_line_in_file('/etc/default/grub', '#GRUB_ENABLE_CRYPTODISK=y', 'GRUB_ENABLE_CRYPTODISK=y')
     os.system(f'grub-install {disk_path}')
     os.system('grub-mkconfig -o /boot/grub/grub.cfg')
 
 
-def install_loader():
+def install_loader(encryption):
     loader = input('What loader you want to use:\n1. GRUB(BIOS)\n2. Refind(UEFI)\n>> ')
+    fs_partition_number = 3 if loader == '2' else 4
     disk_path = input('Input path to main disk: ')
+    part_symbol = 'p' if 'nvme' in disk_path else ''
     if loader == '1':
-        grub_install(disk_path)
+        grub_install(disk_path, part_symbol, fs_partition_number, encryption)
     elif loader == '2':
-        refind_install(disk_path)
+        refind_install(disk_path, part_symbol, fs_partition_number, encryption)
     else:
         print('Invalid loader choice')
-        install_loader()
+        install_loader(encryption)
 
 
 def enable_services(services):
